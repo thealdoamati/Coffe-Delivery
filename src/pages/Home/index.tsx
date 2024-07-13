@@ -1,11 +1,12 @@
 import { useContext } from 'react'
 import { CoffeCard } from '../../components/CoffeCard'
 import { CartContext } from '../../context/CartContext'
+import { CoffeGrid, HomeContainer } from './styles'
 
 export function Home() {
   const { coffeCaracteristics } = useContext(CartContext)
   return (
-    <>
+    <HomeContainer>
       <div>
         <div>
           <h1>Encontre o café perfeito para qualquer hora do dia</h1>
@@ -24,10 +25,12 @@ export function Home() {
       </div>
       <div>
         <h3>Nossos cafés</h3>
-        {coffeCaracteristics.map((coffe) => {
-          return <CoffeCard key={coffe.id} coffe={coffe} />
-        })}
+        <CoffeGrid>
+          {coffeCaracteristics.map((coffe) => {
+            return <CoffeCard key={coffe.id} coffe={coffe} />
+          })}
+        </CoffeGrid>
       </div>
-    </>
+    </HomeContainer>
   )
 }

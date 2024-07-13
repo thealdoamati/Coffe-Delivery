@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { CoffeType } from '../../assets/CoffeList'
 import { CartContext } from '../../context/CartContext'
+import { AddButton, CoffeStyle } from './styles'
 
 interface CoffeCardProps {
   coffe: CoffeType
@@ -43,17 +44,17 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
   }
 
   return (
-    <div>
+    <CoffeStyle>
       <img src={coffe.image} alt="" />
       <h3>{coffe.name}</h3>
       <p>{coffe.description}</p>
       {/* <div>{coffe.type}</div> */}
       <h3>{coffe.price}</h3>
-      <div>
+      <AddButton>
         <button onClick={decreaseCart}>-</button>
         <div>{coffe.quantity}</div>
         <button onClick={increaseCart}>+</button>
-      </div>
-    </div>
+      </AddButton>
+    </CoffeStyle>
   )
 }
