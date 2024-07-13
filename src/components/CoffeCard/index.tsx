@@ -56,9 +56,9 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
     <CoffeStyle>
       <img src={coffe.image} alt={coffe.name} />
       <TypeNameDiv>
-      {coffe.type.map((type) => {
-        return <TypeName key={type.typeName}>{type.typeName}</TypeName>
-      })}
+        {coffe.type.map((type) => {
+          return <TypeName key={type.typeName}>{type.typeName}</TypeName>
+        })}
       </TypeNameDiv>
       <h3>{coffe.name}</h3>
       <p>{coffe.description}</p>
