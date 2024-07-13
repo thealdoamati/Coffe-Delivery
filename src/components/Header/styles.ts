@@ -4,8 +4,16 @@ export const HeaderStyle = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
   background-color: ${(props) => props.theme['gray-100']};
+`
+
+export const LogoButton = styled.button`
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
 `
 
 export const Location = styled.div`

@@ -1,5 +1,5 @@
-import { useContext } from 'react'
-import { CoffeType } from '../../assets/CoffeList'
+import { useContext, useEffect } from 'react'
+import { CoffeType } from '../../utils/CoffeList'
 import { CartContext } from '../../context/CartContext'
 import {
   AddButton,
@@ -11,14 +11,21 @@ import {
   TypeNameDiv,
 } from './styles'
 import { ShoppingCart } from 'phosphor-react'
+import { useNavigate } from 'react-router-dom'
 
 interface CoffeCardProps {
   coffe: CoffeType
 }
 
 export function CoffeCard({ coffe }: CoffeCardProps) {
-  const { increaseUpdateCoffeQuantity, decreaseUpdateCoffeQuantity } =
-    useContext(CartContext)
+  const {
+    increaseUpdateCoffeQuantity,
+    decreaseUpdateCoffeQuantity,
+    sumOfCoffesOnCart,
+    setSelectedCoffes,
+  } = useContext(CartContext)
+
+  const navigate = useNavigate()
 
   // Abaixo seria se eu não usasse contexto
   // const [coffeCaracteristics, setCoffeCaracteristics] = useState(coffe)
@@ -44,12 +51,32 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
   //     }
   //   }
 
+  useEffect(() => {
+    const newCoffe: CoffeType = {
+      id: coffe.id,
+      image: coffe.image,
+      type: coffe.type,
+      name: coffe.name,
+      description: coffe.description,
+      price: coffe.price,
+      quantity: coffe.quantity,
+    }
+    setSelectedCoffes(newCoffe)
+  }, [coffe, setSelectedCoffes])
+
   function increaseCart() {
     increaseUpdateCoffeQuantity(coffe.id)
   }
 
   function decreaseCart() {
     decreaseUpdateCoffeQuantity(coffe.id)
+  }
+
+  function routeToCart() {
+    if (sumOfCoffesOnCart) {
+      const path = '/Cart'
+      navigate(path)
+    }
   }
 
   return (
@@ -72,7 +99,7 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
             <div>{coffe.quantity}</div>
             <Buttons onClick={increaseCart}>+</Buttons>
           </AddButton>
-          <CartButton>
+          <CartButton onClick={routeToCart}>
             <ShoppingCart size={24} weight="fill" />
           </CartButton>
         </div>

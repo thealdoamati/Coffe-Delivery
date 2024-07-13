@@ -1,4 +1,4 @@
-import CoffeIMG1 from '../CoffeImages/Image1.png'
+import CoffeIMG1 from '../../assets/CoffeImages/Image1.png'
 
 interface Typename {
   typeName: string
