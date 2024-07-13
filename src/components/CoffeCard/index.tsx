@@ -8,6 +8,7 @@ import {
   CoffeStyle,
   PriceTag,
   TypeName,
+  TypeNameDiv,
 } from './styles'
 import { ShoppingCart } from 'phosphor-react'
 
@@ -54,9 +55,11 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
   return (
     <CoffeStyle>
       <img src={coffe.image} alt={coffe.name} />
+      <TypeNameDiv>
       {coffe.type.map((type) => {
         return <TypeName key={type.typeName}>{type.typeName}</TypeName>
       })}
+      </TypeNameDiv>
       <h3>{coffe.name}</h3>
       <p>{coffe.description}</p>
       <div>

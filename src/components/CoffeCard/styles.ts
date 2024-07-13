@@ -109,4 +109,12 @@ export const TypeName = styled.div`
   font-size: 0.75rem;
   font-weight: bold;
   text-transform: uppercase;
+  justify-content: center;
+  text-align: center;
+`
+
+export const TypeNameDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
