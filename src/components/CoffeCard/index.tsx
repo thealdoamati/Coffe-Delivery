@@ -1,7 +1,15 @@
 import { useContext } from 'react'
 import { CoffeType } from '../../assets/CoffeList'
 import { CartContext } from '../../context/CartContext'
-import { AddButton, CoffeStyle } from './styles'
+import {
+  AddButton,
+  Buttons,
+  CartButton,
+  CoffeStyle,
+  PriceTag,
+  TypeName,
+} from './styles'
+import { ShoppingCart } from 'phosphor-react'
 
 interface CoffeCardProps {
   coffe: CoffeType
@@ -45,16 +53,27 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
 
   return (
     <CoffeStyle>
-      <img src={coffe.image} alt="" />
+      <img src={coffe.image} alt={coffe.name} />
+      {coffe.type.map((type) => {
+        return <TypeName key={type.typeName}>{type.typeName}</TypeName>
+      })}
       <h3>{coffe.name}</h3>
       <p>{coffe.description}</p>
-      {/* <div>{coffe.type}</div> */}
-      <h3>{coffe.price}</h3>
-      <AddButton>
-        <button onClick={decreaseCart}>-</button>
-        <div>{coffe.quantity}</div>
-        <button onClick={increaseCart}>+</button>
-      </AddButton>
+      <div>
+        <PriceTag>
+          <span>R$</span> {coffe.price}
+        </PriceTag>
+        <div>
+          <AddButton>
+            <Buttons onClick={decreaseCart}>-</Buttons>
+            <div>{coffe.quantity}</div>
+            <Buttons onClick={increaseCart}>+</Buttons>
+          </AddButton>
+          <CartButton>
+            <ShoppingCart size={24} weight="fill" />
+          </CartButton>
+        </div>
+      </div>
     </CoffeStyle>
   )
 }

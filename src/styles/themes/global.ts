@@ -8,8 +8,8 @@ export const GlobalStyle = createGlobalStyle`
         box-sizing: border-box;
     }
     body {
-        background: ${(props) => props.theme['gray-200']};
-        color: ${(props) => props.theme['gray-900']};
+        background: ${(props) => props.theme['base-background']};
+        color: ${(props) => props.theme['base-title']};
         -webkit-font-smoothing: antialiased;
     }
     body, input, textarea, button {
