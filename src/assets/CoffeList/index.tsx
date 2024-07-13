@@ -14,6 +14,24 @@ export interface CoffeType {
   quantity: number
 }
 
+export interface UserAddress {
+  CEP: number
+  Rua: string
+  Número: number
+  Complemento: string
+  Bairro: string
+  Cidade: string
+}
+
+export interface UserCartInfo {
+  address: UserAddress
+  payment: string
+  coffes: CoffeType[]
+  totalItens: number
+  frete: number
+  totalPrice: number
+}
+
 export const coffeesForSale: CoffeType[] = [
   {
     id: '1',

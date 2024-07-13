@@ -19,11 +19,12 @@ export const Location = styled.div`
   gap: 0.25rem;
 `
 
-export const Cart = styled.div`
+export const Cart = styled.button`
   display: flex;
   align-items: center;
   position: relative;
   background: ${(props) => props.theme['yellow-light']};
+  border: none;
   color: ${(props) => props.theme['yellow-dark']};
   padding: 0.5rem;
   border-radius: 6px;
