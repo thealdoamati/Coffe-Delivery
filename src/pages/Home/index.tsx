@@ -5,6 +5,7 @@ import { CoffeGrid, HomeContainer } from './styles'
 
 export function Home() {
   const { coffeCaracteristics } = useContext(CartContext)
+
   return (
     <HomeContainer>
       <div>

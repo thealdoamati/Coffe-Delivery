@@ -1,10 +1,21 @@
 import { useForm } from 'react-hook-form'
-import { CartContainer } from './styles'
+import {
+  CartContainer,
+  FormSection,
+  PaymentSection,
+  SelectedCoffeesSection,
+  AddressInput,
+  PaymentButton,
+  SummaryContainer,
+  SummaryItem,
+  ConfirmButton,
+  FormStyle,
+} from './styles'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Trash } from 'phosphor-react'
 import { useContext } from 'react'
 import { CartContext } from '../../context/CartContext'
+import { CoffeOnCartCard } from '../../components/CoffeOnCartCard'
 
 const addressFormValidationSchema = zod.object({
   CEP: zod.number().lt(8),
@@ -34,8 +45,8 @@ export function Cart() {
 
   return (
     <CartContainer>
-      <form>
-        <div>
+      <FormStyle onSubmit={handleSubmit(handleBuyCoffe)}>
+        <FormSection>
           <h2>Complete seu pedido</h2>
           <div>
             <div>
@@ -43,80 +54,57 @@ export function Cart() {
               <span>Informe o endereço onde deseja receber seu pedido</span>
             </div>
             <div>
-              <input id="cep" type="number" placeholder="CEP" />
-              <input id="rua" type="text" placeholder="Rua" />
+              <AddressInput id="cep" type="number" placeholder="CEP" />
+              <AddressInput id="rua" type="text" placeholder="Rua" />
               <div>
-                <input
-                  id="numero"
-                  type="number"
-                  placeholder="Número (Opcional)"
-                />
-                <input
+                <AddressInput id="numero" type="number" placeholder="Número" />
+                <AddressInput
                   id="complemento"
                   type="text"
-                  placeholder="Complemento (Opcional)"
+                  placeholder="Complemento"
                 />
               </div>
               <div>
-                <input id="bairro" type="text" placeholder="Bairro" />
-                <input id="cidade" type="text" placeholder="Cidade" />
-                <input id="uf" type="text" placeholder="UF" />
+                <AddressInput id="bairro" type="text" placeholder="Bairro" />
+                <AddressInput id="cidade" type="text" placeholder="Cidade" />
+                <AddressInput id="uf" type="text" placeholder="UF" />
               </div>
             </div>
           </div>
-          <div>
+          <PaymentSection>
             <h3>Pagamento</h3>
             <p>
               O pagamento é feito na entrega. Escolha a forma que deseja pagar
             </p>
-            <button>Cartão de crédito</button>
-            <button>Cartão de débito</button>
-            <button>Dinheiro</button>
-          </div>
-        </div>
-        <div>
-          <h2>Cafés selecionados</h2>
-          <div>
             <div>
-              <div>
-                <img src="" alt="" />
-                <h3>Expresso Tradicional</h3>
-                <div>
-                  <div>
-                    <span>R$</span> R$ 19,80
-                  </div>
-                  <div>
-                    <div>
-                      <button>-</button>
-                      <div>0</div>
-                      <button>+</button>
-                    </div>
-                    <button>
-                      <Trash size={24} weight="fill" />
-                      Remover
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <p>Total de itens</p>
-                  <span>R$ 29,70</span>
-                </div>
-                <div>
-                  <p>Entrega</p>
-                  <span>R$ 3,50</span>
-                </div>
-                <div>
-                  <p>Total</p>
-                  <span>R$ 33,20</span>
-                </div>
-                <button>Confirmar pedido</button>
-              </div>
+              <PaymentButton type="button">Cartão de crédito</PaymentButton>
+              <PaymentButton type="button">Cartão de débito</PaymentButton>
+              <PaymentButton type="button">Dinheiro</PaymentButton>
             </div>
-          </div>
-        </div>
-      </form>
+          </PaymentSection>
+        </FormSection>
+        <SelectedCoffeesSection>
+          <h2>Cafés selecionados</h2>
+          {selectedCoffes?.map((coffeCart) => {
+            return <CoffeOnCartCard key={coffeCart.id} coffeCart={coffeCart} />
+          })}
+          <SummaryContainer>
+            <SummaryItem>
+              <p>Total de itens</p>
+              <span>R$ 29,70</span>
+            </SummaryItem>
+            <SummaryItem>
+              <p>Entrega</p>
+              <span>R$ 3,50</span>
+            </SummaryItem>
+            <SummaryItem>
+              <p>Total</p>
+              <span>R$ 33,20</span>
+            </SummaryItem>
+            <ConfirmButton type="submit">Confirmar pedido</ConfirmButton>
+          </SummaryContainer>
+        </SelectedCoffeesSection>
+      </FormStyle>
     </CartContainer>
   )
 }

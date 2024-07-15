@@ -1,8 +1,8 @@
 import {
   createContext,
-  Dispatch,
   ReactNode,
-  SetStateAction,
+  useCallback,
+  useEffect,
   useState,
 } from 'react'
 import { coffeesForSale, CoffeType, UserAddress } from '../utils/CoffeList'
@@ -21,8 +21,9 @@ interface CreateCartType {
   sumOfCoffesOnCart: number
   handleBuyCoffe: (data: BuyCoffeData) => void
   coffeOrder: object
-  selectedCoffes: CoffeType | undefined
-  setSelectedCoffes: Dispatch<SetStateAction<CoffeType | undefined>>
+  selectedCoffes: CoffeType[] | undefined
+  setSelectedCoffes: any
+  handleUpdatedCoffes: () => void
 }
 
 export const CartContext = createContext({} as CreateCartType)
@@ -34,7 +35,7 @@ interface CartContextProviderProps {
 export function CartContextProvider({ children }: CartContextProviderProps) {
   const [coffeCaracteristics, setCoffeCaracteristics] = useState(coffeesForSale)
   const [coffeOrder, setCoffeOrder] = useState({})
-  const [selectedCoffes, setSelectedCoffes] = useState<CoffeType>()
+  const [selectedCoffes, setSelectedCoffes] = useState<CoffeType[]>()
 
   function increaseUpdateCoffeQuantity(id: string) {
     setCoffeCaracteristics((prevState) =>
@@ -64,6 +65,17 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     return a + b.quantity
   }, 0)
 
+  // Eu usei o useCallback aqui, pois como preciso criar um useEffect da função, ia gerar um loop
+  const handleUpdatedCoffes = useCallback(() => {
+    setSelectedCoffes(
+      coffeCaracteristics.filter((coffes) => coffes.quantity > 0),
+    )
+  }, [coffeCaracteristics])
+
+  useEffect(() => {
+    handleUpdatedCoffes()
+  }, [coffeCaracteristics, handleUpdatedCoffes])
+
   function handleBuyCoffe(data: BuyCoffeData) {
     const id = String(new Date().getTime())
     const newOrder = {
@@ -86,6 +98,7 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
         coffeOrder,
         setSelectedCoffes,
         selectedCoffes,
+        handleUpdatedCoffes,
       }}
     >
       {children}

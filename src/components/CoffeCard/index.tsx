@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { CoffeType } from '../../utils/CoffeList'
 import { CartContext } from '../../context/CartContext'
 import {
@@ -22,7 +22,6 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
     increaseUpdateCoffeQuantity,
     decreaseUpdateCoffeQuantity,
     sumOfCoffesOnCart,
-    setSelectedCoffes,
   } = useContext(CartContext)
 
   const navigate = useNavigate()
@@ -50,19 +49,6 @@ export function CoffeCard({ coffe }: CoffeCardProps) {
   //       }))
   //     }
   //   }
-
-  useEffect(() => {
-    const newCoffe: CoffeType = {
-      id: coffe.id,
-      image: coffe.image,
-      type: coffe.type,
-      name: coffe.name,
-      description: coffe.description,
-      price: coffe.price,
-      quantity: coffe.quantity,
-    }
-    setSelectedCoffes(newCoffe)
-  }, [coffe, setSelectedCoffes])
 
   function increaseCart() {
     increaseUpdateCoffeQuantity(coffe.id)
