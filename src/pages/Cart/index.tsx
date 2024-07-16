@@ -40,11 +40,10 @@ export function Cart() {
 
   console.log('selectedCoffes', selectedCoffes)
 
-  const { handleSubmit, register, reset } = addressForm
+  const { handleSubmit, register, setValue } = addressForm
 
   function handlePaymentSelection(payment: string) {
-    setSelectedPayment(payment)
-    console.log(payment)
+    setValue('PaymentType', payment)
   }
 
   function handleBuyCoffe(data) {
