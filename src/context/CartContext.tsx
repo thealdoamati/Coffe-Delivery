@@ -1,6 +1,8 @@
 import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useCallback,
   useEffect,
   useState,
@@ -19,11 +21,13 @@ interface CreateCartType {
   decreaseUpdateCoffeQuantity: (id: string) => void
   coffeCaracteristics: CoffeType[]
   sumOfCoffesOnCart: number
-  handleBuyCoffe: (data: BuyCoffeData) => void
+  createNewCoffe: (data: BuyCoffeData) => void
   coffeOrder: object
   selectedCoffes: CoffeType[] | undefined
   setSelectedCoffes: any
   handleUpdatedCoffes: () => void
+  setSelectedPayment: Dispatch<SetStateAction<string>>
+  selectedPayment: string
 }
 
 export const CartContext = createContext({} as CreateCartType)
@@ -36,6 +40,7 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
   const [coffeCaracteristics, setCoffeCaracteristics] = useState(coffeesForSale)
   const [coffeOrder, setCoffeOrder] = useState({})
   const [selectedCoffes, setSelectedCoffes] = useState<CoffeType[]>()
+  const [selectedPayment, setSelectedPayment] = useState('')
 
   function increaseUpdateCoffeQuantity(id: string) {
     setCoffeCaracteristics((prevState) =>
@@ -76,7 +81,7 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     handleUpdatedCoffes()
   }, [coffeCaracteristics, handleUpdatedCoffes])
 
-  function handleBuyCoffe(data: BuyCoffeData) {
+  function createNewCoffe(data: BuyCoffeData) {
     const id = String(new Date().getTime())
     const newOrder = {
       id,
@@ -84,6 +89,7 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
       coffe: data.coffe,
       paymentMethod: data.paymentMethod,
     }
+
     setCoffeOrder(newOrder)
   }
 
@@ -94,11 +100,13 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
         decreaseUpdateCoffeQuantity,
         increaseUpdateCoffeQuantity,
         sumOfCoffesOnCart,
-        handleBuyCoffe,
+        createNewCoffe,
         coffeOrder,
         setSelectedCoffes,
         selectedCoffes,
         handleUpdatedCoffes,
+        setSelectedPayment,
+        selectedPayment,
       }}
     >
       {children}
