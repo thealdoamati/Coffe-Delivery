@@ -35,7 +35,7 @@ export function Cart() {
     resolver: zodResolver(addressFormValidationSchema),
   })
 
-  const { selectedCoffes } = useContext(CartContext)
+  const { selectedCoffes, sumOfPricesOfCoffesOnCart } = useContext(CartContext)
 
   console.log('selectedCoffes', selectedCoffes)
 
@@ -91,7 +91,7 @@ export function Cart() {
           <SummaryContainer>
             <SummaryItem>
               <p>Total de itens</p>
-              <span>R$ 29,70</span>
+              <span>R$ {sumOfPricesOfCoffesOnCart}</span>
             </SummaryItem>
             <SummaryItem>
               <p>Entrega</p>

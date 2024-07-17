@@ -15,10 +15,14 @@ interface BuyCoffeData {
 }
 
 interface CreateCartType {
+  increaseSelectedCoffeQuantity: (id: string) => void
+  decreaseSelectedCoffeQuantity: (id: string) => void
   increaseUpdateCoffeQuantity: (id: string) => void
   decreaseUpdateCoffeQuantity: (id: string) => void
+  removeSelectedCoffeQuantity: (id: string) => void
   coffeCaracteristics: CoffeType[]
   sumOfCoffesOnCart: number
+  sumOfPricesOfCoffesOnCart: number | undefined
   handleBuyCoffe: (data: BuyCoffeData) => void
   coffeOrder: object
   selectedCoffes: CoffeType[] | undefined
@@ -53,6 +57,14 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     }
   }
 
+  function isNumberLessThanZeroRemover(coffe: CoffeType) {
+    if (coffe.quantity > 0) {
+      return { ...coffe, quantity: coffe.quantity - coffe.quantity }
+    } else {
+      return { ...coffe, quantity: 0 }
+    }
+  }
+
   function decreaseUpdateCoffeQuantity(id: string) {
     setCoffeCaracteristics((prevState) =>
       prevState.map((coffe) =>
@@ -61,8 +73,42 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     )
   }
 
+  function increaseSelectedCoffeQuantity(id: string) {
+    if (selectedCoffes) {
+      setSelectedCoffes((prevState) =>
+        prevState?.map((coffe) =>
+          coffe.id === id ? { ...coffe, quantity: coffe.quantity + 1 } : coffe,
+        ),
+      )
+    }
+  }
+
+  function decreaseSelectedCoffeQuantity(id: string) {
+    if (selectedCoffes) {
+      setCoffeCaracteristics((prevState) =>
+        prevState.map((coffe) =>
+          coffe.id === id ? isNumberLessThanZero(coffe) : coffe,
+        ),
+      )
+    }
+  }
+
+  function removeSelectedCoffeQuantity(id: string) {
+    if (selectedCoffes) {
+      setCoffeCaracteristics((prevState) =>
+        prevState.map((coffe) =>
+          coffe.id === id ? isNumberLessThanZeroRemover(coffe) : coffe,
+        ),
+      )
+    }
+  }
+
   const sumOfCoffesOnCart = coffeCaracteristics.reduce(function (a, b) {
     return a + b.quantity
+  }, 0)
+
+  const sumOfPricesOfCoffesOnCart = selectedCoffes?.reduce(function (a, b) {
+    return a + b.price
   }, 0)
 
   // Eu usei o useCallback aqui, pois como preciso criar um useEffect da função, ia gerar um loop
@@ -93,7 +139,11 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
         coffeCaracteristics,
         decreaseUpdateCoffeQuantity,
         increaseUpdateCoffeQuantity,
+        increaseSelectedCoffeQuantity,
+        decreaseSelectedCoffeQuantity,
+        removeSelectedCoffeQuantity,
         sumOfCoffesOnCart,
+        sumOfPricesOfCoffesOnCart,
         handleBuyCoffe,
         coffeOrder,
         setSelectedCoffes,

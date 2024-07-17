@@ -8,6 +8,8 @@ import {
   QuantityContainer,
   RemoveButton,
 } from './styles'
+import { useContext } from 'react'
+import { CartContext } from '../../context/CartContext'
 
 interface CoffeOnCartCardProps {
   coffeCart: CoffeType
@@ -15,6 +17,24 @@ interface CoffeOnCartCardProps {
 
 export function CoffeOnCartCard({ coffeCart }: CoffeOnCartCardProps) {
   console.log('coffeCart on Cart', coffeCart)
+  const {
+    increaseSelectedCoffeQuantity,
+    decreaseSelectedCoffeQuantity,
+    removeSelectedCoffeQuantity,
+  } = useContext(CartContext)
+
+  function increaseCart() {
+    increaseSelectedCoffeQuantity(coffeCart.id)
+  }
+
+  function decreaseCart() {
+    decreaseSelectedCoffeQuantity(coffeCart.id)
+  }
+
+  function removeCoffeOnCart() {
+    removeSelectedCoffeQuantity(coffeCart.id)
+  }
+
   return (
     <CardContainer>
       <img src={coffeCart.image} alt={coffeCart.name} />
@@ -23,11 +43,11 @@ export function CoffeOnCartCard({ coffeCart }: CoffeOnCartCardProps) {
         <Price>R$ {coffeCart.price.toFixed(2)}</Price>
         <ActionsContainer>
           <QuantityContainer>
-            <button>-</button>
+            <button onClick={decreaseCart}>-</button>
             <div>{coffeCart.quantity}</div>
-            <button>+</button>
+            <button onClick={increaseCart}>+</button>
           </QuantityContainer>
-          <RemoveButton>
+          <RemoveButton onClick={removeCoffeOnCart}>
             <Trash size={24} weight="fill" />
             Remover
           </RemoveButton>
