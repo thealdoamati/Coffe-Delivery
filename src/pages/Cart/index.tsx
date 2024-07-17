@@ -18,14 +18,14 @@ import { CartContext } from '../../context/CartContext'
 import { CoffeOnCartCard } from '../../components/CoffeOnCartCard'
 
 const addressFormValidationSchema = zod.object({
-  CEP: zod.number().lt(8),
+  CEP: zod.string().regex(/^\d{8}$/, 'CEP deve conter exatamente 8 dígitos'),
   Rua: zod.string().min(1, 'Informe a sua rua'),
   Número: zod.number().min(1),
   Complemento: zod.string().min(1, 'Apartamento, bloco...'),
   Bairro: zod.string().min(1, 'Informe o seu bairro.'),
   Cidade: zod.string().min(1, 'Informe a sua cidade.'),
+  UF: zod.string().min(1, 'Unidade federal'),
   PaymentType: zod.string().min(1),
-  TotalPrice: zod.number().min(1),
 })
 
 type AddressFormData = zod.infer<typeof addressFormValidationSchema>
@@ -35,18 +35,25 @@ export function Cart() {
     resolver: zodResolver(addressFormValidationSchema),
   })
 
-  const { selectedCoffes, sumOfPricesOfCoffesOnCart } = useContext(CartContext)
+  const { selectedCoffes, setSelectedPayment, createNewCoffe } =
+    useContext(CartContext)
 
   console.log('selectedCoffes', selectedCoffes)
 
-  const { handleSubmit, watch, reset } = addressForm
+  const { handleSubmit, register, setValue } = addressForm
 
-  function handleBuyCoffe(data: AddressFormData) {}
+  function handlePaymentSelection(payment: string) {
+    setValue('PaymentType', payment)
+  }
+
+  function handleBuyCoffe(data) {
+    console.log(data)
+  }
 
   return (
     <CartContainer>
       <FormStyle onSubmit={handleSubmit(handleBuyCoffe)}>
-        <FormSection>
+        <FormSection {...addressForm}>
           <h2>Complete seu pedido</h2>
           <div>
             <div>
@@ -54,20 +61,51 @@ export function Cart() {
               <span>Informe o endereço onde deseja receber seu pedido</span>
             </div>
             <div>
-              <AddressInput id="cep" type="number" placeholder="CEP" />
-              <AddressInput id="rua" type="text" placeholder="Rua" />
+              <AddressInput
+                id="cep"
+                type="text"
+                placeholder="CEP"
+                {...register('CEP')}
+              />
+              <AddressInput
+                id="rua"
+                type="text"
+                placeholder="Rua"
+                {...register('Rua')}
+              />
               <div>
-                <AddressInput id="numero" type="number" placeholder="Número" />
+                <AddressInput
+                  id="numero"
+                  type="number"
+                  placeholder="Número"
+                  {...register('Número')}
+                />
                 <AddressInput
                   id="complemento"
                   type="text"
                   placeholder="Complemento"
+                  {...register('Complemento')}
                 />
               </div>
               <div>
-                <AddressInput id="bairro" type="text" placeholder="Bairro" />
-                <AddressInput id="cidade" type="text" placeholder="Cidade" />
-                <AddressInput id="uf" type="text" placeholder="UF" />
+                <AddressInput
+                  id="bairro"
+                  type="text"
+                  placeholder="Bairro"
+                  {...register('Bairro')}
+                />
+                <AddressInput
+                  id="cidade"
+                  type="text"
+                  placeholder="Cidade"
+                  {...register('Cidade')}
+                />
+                <AddressInput
+                  id="uf"
+                  type="text"
+                  placeholder="UF"
+                  {...register('UF')}
+                />
               </div>
             </div>
           </div>
@@ -77,9 +115,24 @@ export function Cart() {
               O pagamento é feito na entrega. Escolha a forma que deseja pagar
             </p>
             <div>
-              <PaymentButton type="button">Cartão de crédito</PaymentButton>
-              <PaymentButton type="button">Cartão de débito</PaymentButton>
-              <PaymentButton type="button">Dinheiro</PaymentButton>
+              <PaymentButton
+                type="button"
+                onClick={() => handlePaymentSelection('Cartão de crédito')}
+              >
+                Cartão de crédito
+              </PaymentButton>
+              <PaymentButton
+                type="button"
+                onClick={() => handlePaymentSelection('Cartão de débito')}
+              >
+                Cartão de débito
+              </PaymentButton>
+              <PaymentButton
+                type="button"
+                onClick={() => handlePaymentSelection('Dinheiro')}
+              >
+                Dinheiro
+              </PaymentButton>
             </div>
           </PaymentSection>
         </FormSection>
