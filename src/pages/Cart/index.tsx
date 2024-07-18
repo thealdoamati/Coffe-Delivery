@@ -29,7 +29,9 @@ const addressFormValidationSchema = zod.object({
   Bairro: zod.string().min(1, 'Informe o seu bairro.'),
   Cidade: zod.string().min(1, 'Informe a sua cidade.'),
   UF: zod.string().min(1, 'Unidade federal'),
-  PaymentType: zod.enum(['Cartão de crédito', 'Cartão de débito', 'Dinheiro']),
+  PaymentType: zod.enum(['Cartão de crédito', 'Cartão de débito', 'Dinheiro'], {
+    invalid_type_error: 'Selecione um meio de pagamento',
+  }),
 })
 
 type AddressFormData = zod.infer<typeof addressFormValidationSchema>
@@ -41,7 +43,8 @@ export function Cart() {
   })
   const frete = 3.5
 
-  const { selectedCoffes, sumOfPricesOfCoffesOnCart } = useContext(CartContext)
+  const { selectedCoffes, sumOfPricesOfCoffesOnCart, checkout } =
+    useContext(CartContext)
 
   console.log('selectedCoffes', selectedCoffes)
 
@@ -59,7 +62,11 @@ export function Cart() {
   }
 
   function handleBuyCoffe(data) {
-    console.log(data)
+    if (selectedCoffes?.length === 0) {
+      return alert('É preciso ter ao menos um item no carrinho')
+    }
+
+    checkout(data)
   }
 
   useEffect(() => {

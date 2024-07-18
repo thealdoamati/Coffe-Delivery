@@ -5,9 +5,11 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useReducer,
   useState,
 } from 'react'
 import { coffeesForSale, CoffeType, UserAddress } from '../utils/CoffeList'
+import { AddressFormTypes } from '../utils/Types'
 
 interface BuyCoffeData {
   id: string
@@ -32,6 +34,7 @@ interface CreateCartType {
   handleUpdatedCoffes: () => void
   setSelectedPayment: Dispatch<SetStateAction<string>>
   selectedPayment: string
+  checkout: (data: AddressFormTypes) => void
 }
 
 export const CartContext = createContext({} as CreateCartType)
@@ -45,6 +48,19 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
   const [coffeOrder, setCoffeOrder] = useState({})
   const [selectedCoffes, setSelectedCoffes] = useState<CoffeType[]>()
   const [selectedPayment, setSelectedPayment] = useState('')
+  const [cartState, dispatch] = useReducer(
+    cartReducer,
+    { cart: [], orders: [] },
+    (cartState) => {
+      const storedAsJSON = localStorage.getItem(
+        '@coffee-delivery:cart-state-1.0.0',
+      )
+      if (storedAsJSON) {
+        return JSON.parse(storedAsJSON)
+      }
+      return cartState
+    },
+  )
 
   function increaseUpdateCoffeQuantity(id: string) {
     setCoffeCaracteristics((prevState) =>
@@ -142,6 +158,12 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     setCoffeOrder(newOrder)
   }
 
+  useEffect(() => {
+    const cartJSON = JSON.stringify(cartState)
+
+    localStorage.setItem('@coffee-delivery:cart-state-1.0.0', cartJSON)
+  }, [cartState])
+
   return (
     <CartContext.Provider
       value={{
@@ -160,6 +182,7 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
         handleUpdatedCoffes,
         setSelectedPayment,
         selectedPayment,
+        checkout,
       }}
     >
       {children}
