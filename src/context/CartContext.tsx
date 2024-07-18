@@ -25,7 +25,6 @@ interface CreateCartType {
   coffeCaracteristics: CoffeType[]
   sumOfCoffesOnCart: number
   sumOfPricesOfCoffesOnCart: number | undefined
-  handleBuyCoffe: (data: BuyCoffeData) => void
   createNewCoffe: (data: BuyCoffeData) => void
   coffeOrder: object
   selectedCoffes: CoffeType[] | undefined
@@ -113,8 +112,11 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     return a + b.quantity
   }, 0)
 
-  const sumOfPricesOfCoffesOnCart = selectedCoffes?.reduce(function (a, b) {
-    return a + b.price
+  const sumOfPricesOfCoffesOnCart = selectedCoffes?.reduce(function (
+    total,
+    coffe,
+  ) {
+    return total + coffe.quantity * coffe.price
   }, 0)
 
   // Eu usei o useCallback aqui, pois como preciso criar um useEffect da função, ia gerar um loop
@@ -151,7 +153,6 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
         removeSelectedCoffeQuantity,
         sumOfCoffesOnCart,
         sumOfPricesOfCoffesOnCart,
-        handleBuyCoffe,
         createNewCoffe,
         coffeOrder,
         setSelectedCoffes,

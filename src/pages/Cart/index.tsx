@@ -13,42 +13,62 @@ import {
 } from './styles'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CartContext } from '../../context/CartContext'
 import { CoffeOnCartCard } from '../../components/CoffeOnCartCard'
 
 const addressFormValidationSchema = zod.object({
-  CEP: zod.string().regex(/^\d{8}$/, 'CEP deve conter exatamente 8 dígitos'),
+  CEP: zod.string(),
   Rua: zod.string().min(1, 'Informe a sua rua'),
-  Número: zod.number().min(1),
-  Complemento: zod.string().min(1, 'Apartamento, bloco...'),
+  Número: zod.number().min(1, 'Informe um número válido'),
+  Complemento: zod
+    .string()
+    .min(1, 'Apartamento, bloco...')
+    .optional()
+    .or(zod.literal('')),
   Bairro: zod.string().min(1, 'Informe o seu bairro.'),
   Cidade: zod.string().min(1, 'Informe a sua cidade.'),
   UF: zod.string().min(1, 'Unidade federal'),
-  PaymentType: zod.string().min(1),
+  PaymentType: zod.enum(['Cartão de crédito', 'Cartão de débito', 'Dinheiro']),
 })
 
 type AddressFormData = zod.infer<typeof addressFormValidationSchema>
 
 export function Cart() {
+  const [totalValue, setTotalValue] = useState(0)
   const addressForm = useForm<AddressFormData>({
     resolver: zodResolver(addressFormValidationSchema),
   })
+  const frete = 3.5
 
-  const { selectedCoffes, setSelectedPayment, createNewCoffe } =
-    useContext(CartContext)
+  const { selectedCoffes, sumOfPricesOfCoffesOnCart } = useContext(CartContext)
 
   console.log('selectedCoffes', selectedCoffes)
 
-  const { handleSubmit, register, setValue } = addressForm
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    formState: { errors },
+  } = addressForm
 
-  function handlePaymentSelection(payment: string) {
+  function handlePaymentSelection(
+    payment: 'Cartão de crédito' | 'Cartão de débito' | 'Dinheiro',
+  ) {
     setValue('PaymentType', payment)
   }
 
   function handleBuyCoffe(data) {
     console.log(data)
   }
+
+  useEffect(() => {
+    if (sumOfPricesOfCoffesOnCart) {
+      setTotalValue(sumOfPricesOfCoffesOnCart + frete)
+    } else {
+      setTotalValue(0)
+    }
+  }, [sumOfPricesOfCoffesOnCart])
 
   return (
     <CartContainer>
@@ -67,25 +87,31 @@ export function Cart() {
                 placeholder="CEP"
                 {...register('CEP')}
               />
+              {errors.CEP && <span>{errors.CEP.message}</span>}
               <AddressInput
                 id="rua"
                 type="text"
                 placeholder="Rua"
                 {...register('Rua')}
               />
+              {errors.Rua && <span>{errors.Rua.message}</span>}
               <div>
                 <AddressInput
                   id="numero"
                   type="number"
                   placeholder="Número"
-                  {...register('Número')}
+                  {...register('Número', { valueAsNumber: true })}
                 />
+                {errors.Número && <span>{errors.Número.message}</span>}
                 <AddressInput
                   id="complemento"
                   type="text"
                   placeholder="Complemento"
                   {...register('Complemento')}
                 />
+                {errors.Complemento && (
+                  <span>{errors.Complemento.message}</span>
+                )}
               </div>
               <div>
                 <AddressInput
@@ -94,18 +120,21 @@ export function Cart() {
                   placeholder="Bairro"
                   {...register('Bairro')}
                 />
+                {errors.Bairro && <span>{errors.Bairro.message}</span>}
                 <AddressInput
                   id="cidade"
                   type="text"
                   placeholder="Cidade"
                   {...register('Cidade')}
                 />
+                {errors.Cidade && <span>{errors.Cidade.message}</span>}
                 <AddressInput
                   id="uf"
                   type="text"
                   placeholder="UF"
                   {...register('UF')}
                 />
+                {errors.UF && <span>{errors.UF.message}</span>}
               </div>
             </div>
           </div>
@@ -114,6 +143,7 @@ export function Cart() {
             <p>
               O pagamento é feito na entrega. Escolha a forma que deseja pagar
             </p>
+            {errors.PaymentType && <span>{errors.PaymentType.message}</span>}
             <div>
               <PaymentButton
                 type="button"
@@ -144,15 +174,20 @@ export function Cart() {
           <SummaryContainer>
             <SummaryItem>
               <p>Total de itens</p>
-              <span>R$ {sumOfPricesOfCoffesOnCart}</span>
+              <span>
+                R${' '}
+                {sumOfPricesOfCoffesOnCart
+                  ? sumOfPricesOfCoffesOnCart.toFixed(2)
+                  : 0}
+              </span>
             </SummaryItem>
             <SummaryItem>
               <p>Entrega</p>
-              <span>R$ 3,50</span>
+              <span>R$ {frete.toFixed(2)}</span>
             </SummaryItem>
             <SummaryItem>
               <p>Total</p>
-              <span>R$ 33,20</span>
+              <span>R$ {totalValue.toFixed(2)}</span>
             </SummaryItem>
             <ConfirmButton type="submit">Confirmar pedido</ConfirmButton>
           </SummaryContainer>
