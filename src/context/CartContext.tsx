@@ -10,6 +10,9 @@ import {
 } from 'react'
 import { coffeesForSale, CoffeType, UserAddress } from '../utils/CoffeList'
 import { AddressFormTypes } from '../utils/Types'
+import { cartReducer, Order } from '../reducers/reducer'
+import { checkoutCartAction } from '../reducers/actions'
+import { useNavigate } from 'react-router-dom'
 
 interface BuyCoffeData {
   id: string
@@ -30,11 +33,12 @@ interface CreateCartType {
   createNewCoffe: (data: BuyCoffeData) => void
   coffeOrder: object
   selectedCoffes: CoffeType[] | undefined
-  setSelectedCoffes: any
+  setSelectedCoffes: Dispatch<SetStateAction<CoffeType[] | undefined>>
   handleUpdatedCoffes: () => void
   setSelectedPayment: Dispatch<SetStateAction<string>>
   selectedPayment: string
   checkout: (data: AddressFormTypes) => void
+  orders: Order[]
 }
 
 export const CartContext = createContext({} as CreateCartType)
@@ -61,6 +65,11 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
       return cartState
     },
   )
+
+  const navigate = useNavigate()
+
+  // Isso eu uso pra buscar o que foi enviado no formulário
+  const { orders } = cartState
 
   function increaseUpdateCoffeQuantity(id: string) {
     setCoffeCaracteristics((prevState) =>
@@ -158,6 +167,10 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
     setCoffeOrder(newOrder)
   }
 
+  function checkout(order: AddressFormTypes) {
+    dispatch(checkoutCartAction(order, navigate))
+  }
+
   useEffect(() => {
     const cartJSON = JSON.stringify(cartState)
 
@@ -183,6 +196,7 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
         setSelectedPayment,
         selectedPayment,
         checkout,
+        orders,
       }}
     >
       {children}

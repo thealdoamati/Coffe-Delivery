@@ -11,30 +11,30 @@ import {
   ConfirmButton,
   FormStyle,
 } from './styles'
-import * as zod from 'zod'
+import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useContext, useEffect, useState } from 'react'
 import { CartContext } from '../../context/CartContext'
 import { CoffeOnCartCard } from '../../components/CoffeOnCartCard'
 
-const addressFormValidationSchema = zod.object({
-  CEP: zod.string(),
-  Rua: zod.string().min(1, 'Informe a sua rua'),
-  Número: zod.number().min(1, 'Informe um número válido'),
-  Complemento: zod
+const addressFormValidationSchema = z.object({
+  CEP: z.string(),
+  Rua: z.string().min(1, 'Informe a sua rua'),
+  Número: z.number().min(1, 'Informe um número válido'),
+  Complemento: z
     .string()
     .min(1, 'Apartamento, bloco...')
     .optional()
-    .or(zod.literal('')),
-  Bairro: zod.string().min(1, 'Informe o seu bairro.'),
-  Cidade: zod.string().min(1, 'Informe a sua cidade.'),
-  UF: zod.string().min(1, 'Unidade federal'),
-  PaymentType: zod.enum(['Cartão de crédito', 'Cartão de débito', 'Dinheiro'], {
+    .or(z.literal('')),
+  Bairro: z.string().min(1, 'Informe o seu bairro.'),
+  Cidade: z.string().min(1, 'Informe a sua cidade.'),
+  UF: z.string().min(1, 'Unidade federal'),
+  PaymentType: z.enum(['Cartão de crédito', 'Cartão de débito', 'Dinheiro'], {
     invalid_type_error: 'Selecione um meio de pagamento',
   }),
 })
 
-type AddressFormData = zod.infer<typeof addressFormValidationSchema>
+export type AddressFormData = z.infer<typeof addressFormValidationSchema>
 
 export function Cart() {
   const [totalValue, setTotalValue] = useState(0)
@@ -61,11 +61,10 @@ export function Cart() {
     setValue('PaymentType', payment)
   }
 
-  function handleBuyCoffe(data) {
+  function handleBuyCoffe(data: AddressFormData) {
     if (selectedCoffes?.length === 0) {
       return alert('É preciso ter ao menos um item no carrinho')
     }
-
     checkout(data)
   }
 
