@@ -87,7 +87,8 @@ export const PaymentButton = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['base-hover']};
+    background-color: ${(props) => props.theme['purple-color']};
+    color: ${(props) => props.theme['white-color']};
   }
 `
 
